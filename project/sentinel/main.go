@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
+	"strings"
+	"time"
 
 	firefox "github.com/njasm/marionette_client"
 
@@ -33,6 +34,7 @@ func main() {
 	quit := graceful.Notify(graceful.DefaultSignals...)
 	select {
 	case <-quit:
+		log.Info("sentinel received quit signal")
 		signal.Stop(quit)
 		cancel()
 	}
@@ -43,19 +45,16 @@ func main() {
 	log.Info("sentinel exiting")
 }
 
-var pages = []string{
-	"https://www.bestbuy.com/site/gigabyte-geforce-rtx-3080-10g-gddr6x-pci-express-4-0-graphics-card-black/6436223.p?skuId=6436223",
-}
+var page = "https://www.bestbuy.com/site/gigabyte-geforce-rtx-3080-10g-gddr6x-pci-express-4-0-graphics-card-black/6436223.p?skuId=6436223"
 
 func checkForUpdates(ctx context.Context, fc *firefox.Client) error {
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
 	for {
 		select {
 		case <-ctx.Done():
 			return nil
-		default:
-		}
-
-		for _, page := range pages {
+		case <-ticker.C:
 			if _, err := fc.Navigate(page); err != nil {
 				return err
 			}
@@ -64,9 +63,13 @@ func checkForUpdates(ctx context.Context, fc *firefox.Client) error {
 				return err
 			}
 			if button == nil {
-				return fmt.Errorf("button element not found")
+				log.Warning("buy page has no buy button")
+			} else {
+				if strings.TrimSpace(button.Text()) != "Sold Out" {
+					log.Infof("buy page text: %s", button.Text())
+				}
 			}
-			log.Infof("page text: %s", button.Text())
 		}
+
 	}
 }
