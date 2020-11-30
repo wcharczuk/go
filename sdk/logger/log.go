@@ -70,52 +70,52 @@ func (l Log) Background() context.Context {
 
 // Debug prints a message.
 func (l Log) Debug(args ...interface{}) {
-	l.EmitContext(l.Background(), l.stringMessage(FlagDebug, args...))
+	l.EmitContext(l.Background(), l.StringMessage(FlagDebug, args...))
 }
 
 // Debugf prints a message.
 func (l Log) Debugf(format string, args ...interface{}) {
-	l.EmitContext(l.Background(), l.stringMessagef(FlagDebug, format, args...))
+	l.EmitContext(l.Background(), l.StringMessagef(FlagDebug, format, args...))
 }
 
 // Info prints a message.
 func (l Log) Info(args ...interface{}) {
-	l.EmitContext(l.Background(), l.stringMessage(FlagInfo, args...))
+	l.EmitContext(l.Background(), l.StringMessage(FlagInfo, args...))
 }
 
 // Infof prints a message.
 func (l Log) Infof(format string, args ...interface{}) {
-	l.EmitContext(l.Background(), l.stringMessagef(FlagInfo, format, args...))
+	l.EmitContext(l.Background(), l.StringMessagef(FlagInfo, format, args...))
 }
 
 // Warning prints a message.
 func (l Log) Warning(args ...interface{}) {
-	l.EmitContext(l.Background(), l.stringMessage(FlagWarning, args...))
+	l.EmitContext(l.Background(), l.StringMessage(FlagWarning, args...))
 }
 
 // Warningf prints a message.
 func (l Log) Warningf(format string, args ...interface{}) {
-	l.EmitContext(l.Background(), l.stringMessagef(FlagWarning, format, args...))
+	l.EmitContext(l.Background(), l.StringMessagef(FlagWarning, format, args...))
 }
 
 // Error prints a message.
 func (l Log) Error(args ...interface{}) {
-	l.EmitContext(l.Background(), l.stringMessage(FlagError, args...))
+	l.EmitContext(l.Background(), l.StringMessage(FlagError, args...))
 }
 
 // Errorf prints a message.
 func (l Log) Errorf(format string, args ...interface{}) {
-	l.EmitContext(l.Background(), l.stringMessagef(FlagError, format, args...))
+	l.EmitContext(l.Background(), l.StringMessagef(FlagError, format, args...))
 }
 
 // Fatal prints a message.
 func (l Log) Fatal(args ...interface{}) {
-	l.EmitContext(l.Background(), l.stringMessage(FlagFatal, args...))
+	l.EmitContext(l.Background(), l.StringMessage(FlagFatal, args...))
 }
 
 // Fatalf prints a message.
 func (l Log) Fatalf(format string, args ...interface{}) {
-	l.EmitContext(l.Background(), l.stringMessagef(FlagFatal, format, args...))
+	l.EmitContext(l.Background(), l.StringMessagef(FlagFatal, format, args...))
 }
 
 // Labels returns the full message labels.
@@ -143,7 +143,8 @@ func (l Log) EmitContext(ctx context.Context, msg Message) {
 	l.Formatter.Format(l.Output, msg)
 }
 
-func (l Log) stringMessage(flag string, args ...interface{}) StringMessage {
+// StringMessage creates a new string message.
+func (l Log) StringMessage(flag string, args ...interface{}) StringMessage {
 	return StringMessage{
 		MessageCaller: l.Caller(3),
 		Message:       fmt.Sprint(args...),
@@ -153,7 +154,8 @@ func (l Log) stringMessage(flag string, args ...interface{}) StringMessage {
 	}
 }
 
-func (l Log) stringMessagef(flag, format string, args ...interface{}) StringMessage {
+// StringMessagef creates a new string message.
+func (l Log) StringMessagef(flag, format string, args ...interface{}) StringMessage {
 	return StringMessage{
 		MessageCaller: l.Caller(3),
 		Message:       fmt.Sprintf(format, args...),
