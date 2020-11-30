@@ -70,6 +70,5 @@ func checkForUpdates(ctx context.Context, fc *firefox.Client) error {
 				}
 			}
 		}
-
 	}
 }
