@@ -1,4 +1,4 @@
-package logger
+package log
 
 import (
 	"fmt"
@@ -134,6 +134,12 @@ func (tf TextFormatter) Format(output io.Writer, msg Message) {
 		buffer.WriteString(tf.FormatCaller(msg.Caller()))
 		buffer.WriteString(Space)
 	}
+
+	if typed, ok := msg.(fmt.Stringer); ok {
+		buffer.WriteString(typed.String())
+		buffer.WriteString(Space)
+	}
+
 	if !tf.NoLabels {
 		labels := msg.Labels()
 		if len(labels) > 0 {

@@ -1,4 +1,4 @@
-package logger
+package log
 
 import "runtime"
 
@@ -21,4 +21,9 @@ func (sm StringMessage) Caller() runtime.Frame {
 // Labels returns nothing.
 func (sm StringMessage) Labels() map[string]string {
 	return sm.MessageLabels
+}
+
+// String implements fmt.Stringer
+func (sm StringMessage) String() string {
+	return sm.Message
 }

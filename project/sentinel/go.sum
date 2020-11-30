@@ -1,1 +1,4 @@
-go.charczuk.com v0.0.0-20201129233356-455063276799 h1:/yh0hGRwNX6ubSfRjNr7gKSsA0fU+mclNlv7U/UVnJk=
+github.com/njasm/marionette_client v0.0.1 h1:Gyd733bII11nyaG0MyM2fAfijIOsbhH5qBRmk5Qnhf4=
+github.com/njasm/marionette_client v0.0.1/go.mod h1:MOrdVhbPgoZZ3u7W06ndtZ4bkdlDnmdn39hEVEN147g=
+gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
