@@ -21,7 +21,10 @@ type GoCalls []GoCall
 func (gc GoCalls) Validate() error {
 	for _, c := range gc {
 		if c.Package == "" && c.Func == "" {
-			return validation.FieldsRequired("package", "func")
+			return &validation.Error{
+				Err:     ErrRequired,
+				Mesasge: "Either package and func, or just func, is required",
+			}
 		}
 	}
 	return nil

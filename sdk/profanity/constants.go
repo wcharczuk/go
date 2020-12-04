@@ -1,7 +1,5 @@
 package profanity
 
-import "errors"
-
 // Defaults
 const (
 	DefaultPath      = "."
@@ -15,9 +13,4 @@ const (
 
 	GoFiles     = "*.go"
 	GoTestFiles = "*_test.go"
-)
-
-// Errors
-var (
-	ErrFailure = errors.New("profanity failure")
 )

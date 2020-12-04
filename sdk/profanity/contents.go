@@ -3,7 +3,6 @@ package profanity
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -12,11 +11,6 @@ import (
 
 var (
 	_ Rule = (*Contents)(nil)
-)
-
-// Errors
-var (
-	ErrContentsRequired = errors.New("contents rule spec must provide `contains`, `glob` or `regex` values")
 )
 
 // Contents creates a new contents rule.
@@ -44,47 +38,61 @@ func (cm Contents) Validate() error {
 func (cm Contents) Check(filename string, contents []byte) (result RuleResult) {
 	scanner := bufio.NewScanner(bytes.NewReader(contents))
 
+	var notOK bool
 	var line int
 	var lineText string
 	var containsInclude, containsExclude string
 	var globInclude, globExclude string
 	var regexInclude, regexExclude string
+	var tokens []string
+
 	for scanner.Scan() {
 		line++
 		lineText = scanner.Text()
 
-		containsInclude, containsExclude = cm.Contains.Match(lineText)
-		globInclude, globExclude = cm.Glob.Match(lineText)
-		regexInclude, regexExclude = cm.Regex.Match(lineText)
-
-		if cm.Contains.AllowMatch(containsInclude, containsExclude) ||
-			cm.Glob.AllowMatch(globInclude, globExclude) ||
-			cm.Regex.AllowMatch(regexInclude, regexExclude) {
-
-			var tokens []string
-			if containsInclude != "" {
-				tokens = append(tokens, fmt.Sprintf("contents contains include: %q", containsInclude))
+		if !cm.Contains.IsZero() {
+			containsInclude, containsExclude = cm.Contains.Match(lineText)
+			if cm.Contains.AllowMatch(containsInclude, containsExclude) {
+				if containsInclude != "" {
+					tokens = append(tokens, fmt.Sprintf("contents contains include: %q", containsInclude))
+				}
+				if containsExclude != "" {
+					tokens = append(tokens, fmt.Sprintf("contents contains exclude: %q", containsExclude))
+				}
+				notOK = true
 			}
-			if containsExclude != "" {
-				tokens = append(tokens, fmt.Sprintf("contents contains exclude: %q", containsExclude))
+		}
+		if !cm.Glob.IsZero() {
+			globInclude, globExclude = cm.Glob.Match(lineText)
+			if cm.Glob.AllowMatch(globInclude, globExclude) {
+				if globInclude != "" {
+					tokens = append(tokens, fmt.Sprintf("contents glob include: %q", globInclude))
+				}
+				if globExclude != "" {
+					tokens = append(tokens, fmt.Sprintf("contents glob exclude: %q", globExclude))
+				}
+				notOK = true
 			}
-			if globInclude != "" {
-				tokens = append(tokens, fmt.Sprintf("contents glob include: %q", globInclude))
+		}
+		if !cm.Regex.IsZero() {
+			regexInclude, regexExclude = cm.Regex.Match(lineText)
+			if cm.Regex.AllowMatch(regexInclude, regexExclude) {
+				if regexInclude != "" {
+					tokens = append(tokens, fmt.Sprintf("contents regex include: %q", regexInclude))
+				}
+				if regexExclude != "" {
+					tokens = append(tokens, fmt.Sprintf("contents regex exclude: %q", regexExclude))
+				}
+				notOK = true
 			}
-			if globExclude != "" {
-				tokens = append(tokens, fmt.Sprintf("contents glob exclude: %q", globExclude))
-			}
-			if regexInclude != "" {
-				tokens = append(tokens, fmt.Sprintf("contents regex include: %q", regexInclude))
-			}
-			if regexExclude != "" {
-				tokens = append(tokens, fmt.Sprintf("contents regex exclude: %q", regexExclude))
-			}
+		}
+		if notOK {
 			result = RuleResult{
 				File:    filename,
 				Line:    line,
 				Message: strings.Join(tokens, ", "),
 			}
+			return
 		}
 	}
 

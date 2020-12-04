@@ -6,7 +6,7 @@ GOLANG_LOGGER: #note: this does not affect go-sdk/logger because of the package 
       - "*logger.Logger"
 
 GOLANG_STRETCHR_TESTIFY:
-  description: "please use `golang.blend.com/sdk/assert`"
+  description: "please use `go.charczuk.com/sdk/assert`"
   goImports:
     include:
     - "github.com/stretchr/testify/assert"
@@ -25,10 +25,10 @@ GOLANG_ASSERT_NON_TEST:
     - "*_test.go"
   goImports:
     include:
-    - "golang.blend.com/sdk/assert"
+    - "go.blend.com/sdk/assert"
 
 GOLANG_DEPRECATED:
-  description: "please switch to using `golang.blend.com`"
+  description: "please switch to using `go.blend.com`"
   goImports:
     include:
     - "github.com/blendlabs/*"
@@ -66,12 +66,12 @@ GOLANG_FMT_PRINT:
     package: "fmt"
   - func: "Println"
     package: "fmt"
- 
+
 GOLANG_CMD_IMPORTS:
   description: "please don't reference cmd packages"
   goImports:
     include:
-    - "golang.blend.com/sdk/cmd*"
+    - "go.blend.com/sdk/cmd*"
 
 GOLANG_EXAMPLES_IMPORTS:
   description: "please don't reference example packages"
@@ -80,17 +80,17 @@ GOLANG_EXAMPLES_IMPORTS:
     - "examples/*"
   goImports:
     include:
-    - "golang.blend.com/sdk/example*"
+    - "go.blend.com/sdk/example*"
 
 GOLANG_CONTEXT_SHADOWED:
   description: "you should not shadow the context package"
-  contents: 
+  contents:
     contains:
       include:
       - "context context.Context"
 
 GIT_MERGE_CONFLICTS:
   description: "do not commit merge conflicted code"
-  contents: 
-    contains: 
+  contents:
+    contains:
       include: [ "<<<<<<<", ">>>>>>>"]

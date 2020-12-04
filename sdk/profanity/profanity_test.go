@@ -9,9 +9,9 @@ import (
 func Test_Profanity_ReadRuleSpecsFile(t *testing.T) {
 	its := assert.New(t)
 
-	engine := &Profanity{}
+	profanity := &Profanity{}
 
-	rules, err := engine.ReadRuleSpecsFile("testdata/rules.yml")
+	rules, err := profanity.ReadRuleSpecsFile("testdata/rules.yml")
 	its.Nil(err)
 	its.NotEmpty(rules)
 }

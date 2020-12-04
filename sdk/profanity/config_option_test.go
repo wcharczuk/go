@@ -6,7 +6,7 @@ import (
 	"go.charczuk.com/sdk/assert"
 )
 
-func Test_Config_Options(t *testing.T) {
+func TestConfigOptions(t *testing.T) {
 	its := assert.New(t)
 
 	cfg := &Config{}

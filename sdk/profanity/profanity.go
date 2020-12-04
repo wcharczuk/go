@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"go.charczuk.com/sdk/ex"
 	"gopkg.in/yaml.v3"
 )
 
@@ -44,10 +45,10 @@ func (p *Profanity) Process() error {
 		if err != ErrFailure {
 			return err
 		}
-		p.Verbose("profanity failed!")
+		p.Verbosef("profanity %s!", ansi.Red("failed"))
 		return nil
 	}
-	p.Verbose("profanity ok!")
+	p.Verbosef("profanity %s!", ansi.Green("ok"))
 	return nil
 }
 
@@ -55,7 +56,7 @@ func (p *Profanity) Process() error {
 func (p *Profanity) Walk(path string, rules ...RuleSpec) error {
 	dirs, files, err := ListDir(path)
 	if err != nil {
-		return fmt.Errorf("profanity; invalid walk path: %q, %w", path, err)
+		return ex.New("profanity; invalid walk path", ex.OptMessagef("path: %q", path), ex.OptInner(err))
 	}
 
 	var didFail bool
@@ -132,7 +133,7 @@ func (p *Profanity) Walk(path string, rules ...RuleSpec) error {
 func (p *Profanity) ReadRuleSpecsFile(filename string) (rules []RuleSpec, err error) {
 	contents, readErr := os.Open(filename)
 	if readErr != nil {
-		err = fmt.Errorf("cannot read rules file: %q, %w", filename, readErr)
+		err = ex.New(readErr, ex.OptMessagef("file: %s", filename))
 		return
 	}
 	defer contents.Close()
@@ -147,7 +148,7 @@ func (p *Profanity) ReadRuleSpecsFromReader(filename string, reader io.Reader) (
 	decoder.KnownFields(true)
 	yamlErr := decoder.Decode(&fileRules)
 	if yamlErr != nil {
-		err = fmt.Errorf("cannot unmarshal rules file: %q, %w", filename, yamlErr)
+		err = ex.New("cannot unmarshal rules file", ex.OptMessagef("file: %s", filename), ex.OptInnerClass(yamlErr))
 		return
 	}
 	for _, rule := range fileRules.Rules() {
@@ -168,21 +169,14 @@ func (p Profanity) FormatRuleResultFailure(r RuleSpec, rr RuleResult) error {
 		return nil
 	}
 	var lines []string
-	lines = append(lines, fmt.Sprintf("%s:%d", rr.File, rr.Line))
-	lines = append(lines, fmt.Sprintf("\t%s: %s", "id", r.ID))
+	lines = append(lines, fmt.Sprintf("%s:%d", ansi.Bold(ansi.ColorWhite, rr.File), rr.Line))
+	lines = append(lines, fmt.Sprintf("\t%s: %s", ansi.LightBlack("id"), r.ID))
 	if r.Description != "" {
-		lines = append(lines, fmt.Sprintf("\t%s: %s", "description", r.Description))
+		lines = append(lines, fmt.Sprintf("\t%s: %s", ansi.LightBlack("description"), r.Description))
 	}
-	lines = append(lines, fmt.Sprintf("\t%s: %s", "status", "failed"))
-	lines = append(lines, fmt.Sprintf("\t%s: %s", "rule", rr.Message))
+	lines = append(lines, fmt.Sprintf("\t%s: %s", ansi.LightBlack("status"), ansi.Red("failed")))
+	lines = append(lines, fmt.Sprintf("\t%s: %s", ansi.LightBlack("rule"), rr.Message))
 	return fmt.Errorf(strings.Join(lines, "\n"))
-}
-
-// Verbose prints a verbose message.
-func (p *Profanity) Verbose(args ...interface{}) {
-	if p.Config.VerboseOrDefault() {
-		p.Print("[VERBOSE] ", fmt.Sprint(args...), "\n")
-	}
 }
 
 // Verbosef prints a verbose message.
@@ -196,13 +190,6 @@ func (p *Profanity) Verbosef(format string, args ...interface{}) {
 func (p *Profanity) Debugf(format string, args ...interface{}) {
 	if p.Config.DebugOrDefault() {
 		p.Printf("[DEBUG] "+format+"\n", args...)
-	}
-}
-
-// Print writes to the output stream.
-func (p *Profanity) Print(args ...interface{}) {
-	if p.Stdout != nil {
-		fmt.Fprint(p.Stdout, args...)
 	}
 }
 

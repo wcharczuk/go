@@ -6,7 +6,7 @@ import (
 	"go.charczuk.com/sdk/assert"
 )
 
-func Test_GoCalls_passing(t *testing.T) {
+func TestCallsPassing(t *testing.T) {
 	its := assert.New(t)
 
 	file := `package main
@@ -36,7 +36,7 @@ func main() {
 	its.True(res.OK)
 }
 
-func Test_GoCalls_println(t *testing.T) {
+func TestCallsPrintln(t *testing.T) {
 	its := assert.New(t)
 
 	file := `package main
@@ -68,7 +68,7 @@ func main() {
 	its.Equal(11, res.Line)
 }
 
-func Test_GoCalls_EmptyPackage(t *testing.T) {
+func TestCallsEmptyPackage(t *testing.T) {
 	its := assert.New(t)
 
 	file := `package main

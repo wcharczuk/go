@@ -1,11 +1,11 @@
 package profanity
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
-	"go.charczuk.com/sdk/validation"
+	"go.charczuk.com/sdk/ex"
+	"go.charczuk.com/sdk/validate"
 )
 
 var (
@@ -13,9 +13,9 @@ var (
 )
 
 // Errors
-var (
-	ErrRuleSpecMultipleRules = errors.New("rule spec invalid; multiple rule types specified")
-	ErrRuleSpecRuleMissing   = errors.New("rule spec invalid; at least one rule type is required")
+const (
+	ErrRuleSpecMultipleRules ex.Class = "rule spec invalid; multiple rule types specified"
+	ErrRuleSpecRuleMissing   ex.Class = "rule spec invalid; at least one rule type is required"
 )
 
 // RuleSpec is a serialized rule.
@@ -35,8 +35,8 @@ type RuleSpec struct {
 
 // Validate validates the RuleSpec.
 func (r RuleSpec) Validate() error {
-	if r.ID == "" {
-		return validation.FieldRequired("id")
+	if err := validate.String(&r.ID).Required()(); err != nil {
+		return err
 	}
 	if err := r.Files.Validate(); err != nil {
 		return err
@@ -132,7 +132,7 @@ func (r RuleSpecRules) Validate() error {
 		}
 	}
 	return nil
-}
+} 
 
 // String implements fmt.Stringer.
 func (r RuleSpecRules) String() string {

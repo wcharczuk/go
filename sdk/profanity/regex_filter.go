@@ -21,7 +21,7 @@ func (rf RegexFilter) Allow(value string) (result bool) {
 }
 
 // MustMatch regexp but panics
-func (rf RegexFilter) MustMatch(expr, value string) bool {
+func (rf RegexFilter) MustMatch(value, expr string) bool {
 	result, err := regexp.MatchString(expr, value)
 	if err != nil {
 		panic(err)

@@ -9,19 +9,19 @@ import (
 func TestConfig(t *testing.T) {
 	its := assert.New(t)
 
-	trueValue := true
+	boolTrue := true
 
 	cfg := Config{}
 	its.False(cfg.DebugOrDefault())
-	cfg.Debug = &trueValue
+	cfg.Debug = &boolTrue
 	its.True(cfg.DebugOrDefault())
 
 	its.False(cfg.VerboseOrDefault())
-	cfg.Verbose = &trueValue
+	cfg.Verbose = &boolTrue
 	its.True(cfg.VerboseOrDefault())
 
 	its.False(cfg.FailFastOrDefault())
-	cfg.FailFast = &trueValue
+	cfg.FailFast = &boolTrue
 	its.True(cfg.FailFastOrDefault())
 
 	its.Equal(DefaultRulesFile, cfg.RulesFileOrDefault())

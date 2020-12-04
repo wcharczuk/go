@@ -13,11 +13,16 @@ type Filter struct {
 	Exclude []string `yaml:"exclude,omitempty"`
 }
 
+// IsZero returns if the filter is set or not.
+func (f Filter) IsZero() bool {
+	return len(f.Include) == 0 && len(f.Exclude) == 0
+}
+
 // Match returns the matching glob filter for a given value.
 func (f Filter) Match(value string, filter func(string, string) bool) (includeMatch, excludeMatch string) {
 	if len(f.Include) > 0 {
 		for _, include := range f.Include {
-			if filter(include, value) {
+			if filter(value, include) {
 				includeMatch = include
 				break
 			}
@@ -26,7 +31,7 @@ func (f Filter) Match(value string, filter func(string, string) bool) (includeMa
 	if len(f.Include) == 0 || includeMatch != "" {
 		if len(f.Exclude) > 0 {
 			for _, exclude := range f.Exclude {
-				if filter(exclude, value) {
+				if filter(value, exclude) {
 					excludeMatch = exclude
 					break
 				}
